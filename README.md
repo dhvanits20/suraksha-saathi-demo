@@ -1,4 +1,4 @@
-# Suraksha Saathi AI (Hackathon MVP)
+# Suraksha Saathi AI 
 
 Suraksha Saathi AI is your AI Guardian for safe digital banking in every Indian language. It helps first-time digital banking users detect scam calls, fake UPI requests, phishing, and loan scams.
 
