@@ -1,0 +1,111 @@
+{
+  "name": "Suraksha Saathi AI Risk Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "scam-detect",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "e98e8334-a15d-4f19-b7b5-0c9f13883a99",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "suraksha-saathi-demo-webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_GEMINI_API_KEY_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents",
+              "value": "={{ [ { \"parts\": [ {\"text\": \"You are a scam detection AI. Analyze this transcribed call text for financial scams. Return ONLY valid JSON with two fields: 'score' (0 to 100 probability of scam), and 'flags' (array of strings, briefly explaining why it is a scam). Text: \\\"\" + $json.body.text + \"\\\"\" } ] } ] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "76f0d867-b952-4414-b15c-30fc71183204",
+      "name": "Gemini API (AI Risk Engine)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "analysis",
+              "value": "={{ $json.candidates[0].content.parts[0].text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e3e11a3b-2856-42a3-9ab4-1a938cc8f13b",
+      "name": "Format JSON Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        650,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Gemini API (AI Risk Engine)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini API (AI Risk Engine)": {
+      "main": [
+        [
+          {
+            "node": "Format JSON Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f7ab0a70-3d3a-44c1-bfaf-fca275c960df",
+  "meta": {
+    "instanceId": "cb315c106ad048e4b85c184083d65b796fa049b79ab4e9f7831fa8f813a30364"
+  },
+  "id": "suraksha-n8n-1"
+}
